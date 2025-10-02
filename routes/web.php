@@ -14,13 +14,8 @@ use App\Http\Controllers\GetSkillsadminController;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
-
+// Rotas do tema GetSkills
 Route::controller(GetSkillsadminController::class)->group(function () {
-
     Route::get('/',                 'dashboard_1');
     Route::get('/index',            'dashboard_1');
     Route::get('/index-2',          'dashboard_2');
@@ -99,5 +94,9 @@ Route::controller(GetSkillsadminController::class)->group(function () {
     Route::get('/page-forgot-password', 'page_forgot_password');
     Route::get('/page-lock-screen', 'page_lock_screen');
     Route::get('/empty-page',       'page_empty');
+});
 
+// Rota temporária para validar tema
+Route::get('/_getskills_demo', function () {
+    return view('pages._demo_getskills_ok');
 });

@@ -1,0 +1,116 @@
+---
+alwaysApply: true
+---
+            scoringMode:  $request->string('scoring_mode')->toString(),
+            totalScore:   $request->integer('total_score'),
+            tenantId:     tenant('id'),
+        );
+        $trail = $action->handle($data);
+        return response()->json(new TrailResource($trail), 201);
+    }
+}
+
+8.6) Resource
+# path: modules/Trails/Http/Resources/TrailResource.php
+<?php
+declare(strict_types=1);
+namespace Modules\Trails\Http\Resources;
+use Illuminate\Http\Resources\Json\JsonResource;
+/** @mixin \Modules\Trails\Models\Trail */
+final class TrailResource extends JsonResource
+{
+    public function toArray($request): array
+    {
+        return [
+            'id'           => $this->id,
+            'title'        => $this->title,
+            'description'  => $this->description,
+            'scoring_mode' => $this->scoring_mode,
+            'total_score'  => $this->total_score,
+            'active'       => (bool) $this->active,
+        ];
+    }
+}
+
+────────────────────────────────────────────────────────────────────────
+
+9) Rotas (padrão)
+- API: modules/*/Routes/api.php
+- Web: modules/*/Routes/web.php
+Prefixos sugeridos:
+- /api/admin/trails
+- /api/tutor/reports
+- /api/aluno/trilha-atual
+Middlewares: auth, tenant, role:admin|tutor|aluno.
+
+────────────────────────────────────────────────────────────────────────
+
+10) Regras para IA (Módulo AI)
+- Geração de título, descrição, capa e payload JSON para templates (quiz/memória/drag&drop).
+- Persistir ai_prompt, ai_image_seed, style_tag.
+- Sanitizar e validar tamanho/tipos; nunca usar conteúdo não confiável sem sandbox.
+
+────────────────────────────────────────────────────────────────────────
+
+11) Relatórios & Ranking
+- Atualização assíncrona via Jobs a cada finalização de jogo/trilha.
+- Consultas com índices e where tenant_id = ?.
+- Cache de painéis e leaderboards invalidado por eventos.
+
+────────────────────────────────────────────────────────────────────────
+
+12) Comandos úteis (artisan)
+- php artisan module:make Models/Trail Trails
+- php artisan module:make-request StoreTrailRequest Trails
+- php artisan module:make-controller TrailController Trails
+- php artisan module:make-resource TrailResource Trails
+- php artisan permission:create-role admin
+- php artisan make:policy --model=Modules\\Trails\\Models\\Trail
+Padronize stubs para incluir declare(strict_types=1);.
+
+────────────────────────────────────────────────────────────────────────
+
+13) Testes (Pest)
+- Criar testes para migrations, requests, actions e controllers.
+- Usar factories em modules/*/Database/factories.
+
+Exemplo:
+# path: modules/Trails/Tests/Feature/CreateTrailTest.php
+<?php
+declare(strict_types=1);
+use Modules\Trails\Models\Trail;
+it('creates a trail', function () {
+    $payload = ['title' => 'Trilha EF II', 'scoring_mode' => 'sum'];
+    $this->actingAs($this->adminUser())
+        ->postJson('/api/admin/trails', $payload)
+        ->assertCreated();
+    expect(Trail::query()->where('title', 'Trilha EF II')->exists())->toBeTrue();
+});
+
+────────────────────────────────────────────────────────────────────────
+
+14) Telas (Blade/Inertia)
+- Reutilizar componentes (tema getSkilss).
+- Validar com Form Request; feedback de erro claro.
+- Painel Tutor (tempo real) consome canal WS do módulo Realtime.
+
+────────────────────────────────────────────────────────────────────────
+
+15) NÃO faça
+- Não usar SQL cru quando Eloquent atende.
+- Não colocar lógica de domínio em Controllers.
+- Não misturar escopos global/tenant sem campo scope explícito.
+- Não ignorar tenant_id em consultas transacionais.
+- Não expor dados sensíveis do aluno.
+
+────────────────────────────────────────────────────────────────────────
+
+16) Atalhos de Pedidos (prompts prontos)
+- Scaffold do Módulo Tenancy (CRUD de Unidades/Domínios) com migrations, models, controller, requests, rotas, seeds e testes.
+- Implementar endpoint POST /api/sessions (Gameplay) que recebe score e completed, valida avanço sequencial e dispara Job de atualização de ranking.
+- Criar ação para clonar Trilha global para o tenant atual.
+- Adicionar leaderboard por Série e Geral com Jobs, Events e cache.
+- Gerar Form Requests + Policies para Jogos.
+- Criar relatório básico (Reporting) com export CSV.
+
+Fim do Rule.

@@ -11,9 +11,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        if ($this->app->environment('local')) {
-            $this->app->register(\Laravel\Horizon\HorizonServiceProvider::class);
-        }
+        // Temporariamente desabilitado para evitar dependência do Redis
+        // if ($this->app->environment('local')) {
+        //     $this->app->register(\Laravel\Horizon\HorizonServiceProvider::class);
+        // }
     }
 
     /**

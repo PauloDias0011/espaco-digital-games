@@ -1,0 +1,18 @@
+<svg width="200" height="80" viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Triângulo Vermelho (Superior) -->
+  <path d="M100 5 L140 35 L60 35 Z" fill="#FF5757"/>
+  
+  <!-- Triângulo Azul (Esquerdo) -->
+  <path d="M50 40 L80 70 L50 70 Z" fill="#5B6FA8"/>
+  
+  <!-- Triângulo Amarelo (Direito) -->
+  <path d="M150 40 L150 70 L120 70 Z" fill="#FFB84D"/>
+  
+  <!-- Triângulo Verde (Inferior) -->
+  <path d="M100 75 L70 45 L130 45 Z" fill="#2ECC71"/>
+  
+  <!-- Letras ED -->
+  <rect x="75" y="30" width="50" height="25" fill="white" opacity="0.95"/>
+  <text x="100" y="50" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#5B6FA8" text-anchor="middle">E</text>
+  <text x="115" y="50" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#FFB84D" text-anchor="middle">D</text>
+</svg>

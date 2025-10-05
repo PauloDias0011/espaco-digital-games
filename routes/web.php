@@ -100,3 +100,52 @@ Route::controller(GetSkillsadminController::class)->group(function () {
 Route::get('/_getskills_demo', function () {
     return view('pages._demo_getskills_ok');
 });
+
+// Rota temporária para testar módulo Tenancy (sem middleware de tenancy)
+Route::get('/test-tenancy', function () {
+    return 'Módulo Tenancy funcionando!';
+})->withoutMiddleware([
+    \Stancl\Tenancy\Middleware\InitializeTenancyByDomain::class,
+    \Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains::class,
+]);
+
+// Rota para testar resolução de tenant
+Route::get('/test-tenant-resolver', function () {
+    try {
+        $domain = \Modules\Tenancy\App\Models\TenantDomain::where('domain', '127.0.0.1')->with('tenant')->first();
+        if ($domain) {
+            return response()->json([
+                'status' => 'success',
+                'domain' => $domain->domain,
+                'tenant_id' => $domain->tenant->id,
+                'tenant_name' => $domain->tenant->getName(),
+                'tenant_status' => $domain->tenant->getStatus()
+            ]);
+        } else {
+            return response()->json(['status' => 'error', 'message' => 'Domínio não encontrado']);
+        }
+    } catch (Exception $e) {
+        return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    }
+})->withoutMiddleware([
+    \Stancl\Tenancy\Middleware\InitializeTenancyByDomain::class,
+    \Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains::class,
+]);
+
+// Rotas do Super Admin (Módulo Tenancy)
+Route::prefix('superadmin')->name('superadmin.')->group(function () {
+    // Dashboard
+    Route::get('/', [\App\Http\Controllers\SuperAdmin\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\SuperAdmin\DashboardController::class, 'index']);
+    
+    // API para monitoramento em tempo real
+    Route::get('/api/resources', [\App\Http\Controllers\SuperAdmin\SystemMonitorController::class, 'resources'])->name('api.resources');
+    
+    // Gestão de Unidades
+    Route::resource('tenants', \Modules\Tenancy\App\Http\Controllers\TenantController::class)->except(['show']);
+    
+    Route::prefix('tenants/{tenant}')->name('tenants.')->group(function () {
+        Route::post('domains', [\Modules\Tenancy\App\Http\Controllers\TenantController::class, 'storeDomain'])->name('domains.store');
+        Route::delete('domains/{domain}', [\Modules\Tenancy\App\Http\Controllers\TenantController::class, 'destroyDomain'])->name('domains.destroy');
+    });
+});

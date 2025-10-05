@@ -28,6 +28,16 @@ class RouteServiceProvider extends ServiceProvider
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
 
+        // Route model binding para Tenant
+        Route::bind('tenant', function ($value) {
+            return \Modules\Tenancy\App\Models\Tenant::findOrFail($value);
+        });
+
+        // Route model binding para TenantDomain
+        Route::bind('domain', function ($value) {
+            return \Modules\Tenancy\App\Models\TenantDomain::findOrFail($value);
+        });
+
         $this->routes(function () {
             Route::middleware('api')
                 ->prefix('api')

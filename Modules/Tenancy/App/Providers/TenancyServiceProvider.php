@@ -29,7 +29,16 @@ class TenancyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->register(RouteServiceProvider::class);
+        // $this->app->register(RouteServiceProvider::class);
+        $this->loadRoutes();
+    }
+
+    /**
+     * Load routes manually if needed.
+     */
+    protected function loadRoutes(): void
+    {
+        $this->loadRoutesFrom(module_path($this->moduleName, '/routes/web.php'));
     }
 
     /**

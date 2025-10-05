@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-use Stancl\Tenancy\Database\Models\Domain;
-use Stancl\Tenancy\Database\Models\Tenant;
+use Modules\Tenancy\App\Models\Tenant;
+use Modules\Tenancy\App\Models\TenantDomain;
 
 return [
     'tenant_model' => Tenant::class,
     'id_generator' => Stancl\Tenancy\UUIDGenerator::class,
 
-    'domain_model' => Domain::class,
+    'domain_model' => TenantDomain::class,
 
     /**
      * The list of domains hosting your central app.
@@ -17,8 +17,8 @@ return [
      * Only relevant if you're using the domain or subdomain identification middleware.
      */
     'central_domains' => [
-        '127.0.0.1',
         'localhost',
+        'espacodigital.local',
     ],
 
     /**

@@ -36,6 +36,8 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            // Removidos os middlewares de tenancy do grupo web global
+            // Eles devem ser aplicados apenas em routes/tenant.php
         ],
 
         'api' => [
@@ -64,5 +66,9 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        
+        // Tenancy middleware aliases
+        'tenancy.initialize' => \Stancl\Tenancy\Middleware\InitializeTenancyByDomain::class,
+        'tenancy.prevent' => \Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains::class,
     ];
 }

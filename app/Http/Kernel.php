@@ -70,5 +70,11 @@ class Kernel extends HttpKernel
         // Tenancy middleware aliases
         'tenancy.initialize' => \Stancl\Tenancy\Middleware\InitializeTenancyByDomain::class,
         'tenancy.prevent' => \Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains::class,
+        
+        // Student middleware aliases
+        'student.tenant' => \App\Http\Middleware\EnsureStudentBelongsToTenant::class,
+        
+        // Admin middleware aliases
+        'admin.manage.students' => \App\Http\Middleware\EnsureUserCanManageStudents::class,
     ];
 }

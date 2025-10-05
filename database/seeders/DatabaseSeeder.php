@@ -14,6 +14,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             \Modules\Tenancy\Database\Seeders\TenancySeeder::class,
+            \Database\Seeders\RoleSeeder::class,
+            \Database\Seeders\DemoDataSeeder::class,
         ]);
     }
 }

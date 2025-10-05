@@ -68,6 +68,14 @@ class Tenant extends Model implements TenantContract
     }
 
     /**
+     * Get the users for the tenant.
+     */
+    public function users(): HasMany
+    {
+        return $this->hasMany(\Modules\Identity\App\Models\User::class);
+    }
+
+    /**
      * Get tenant name from data.
      */
     public function getName(): string

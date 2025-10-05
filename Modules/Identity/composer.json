@@ -1,0 +1,22 @@
+{
+    "name": "modules/identity",
+    "description": "Identity Module",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^8.1",
+        "laravel/framework": "^10.0|^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Identity\\": ""
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\Identity\\App\\Providers\\IdentityServiceProvider"
+            ]
+        }
+    }
+}

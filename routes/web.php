@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GetSkillsadminController;
+use App\Http\Controllers\StudentAuthController;
+use App\Http\Controllers\Admin\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -148,4 +150,37 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
         Route::post('domains', [\Modules\Tenancy\App\Http\Controllers\TenantController::class, 'storeDomain'])->name('domains.store');
         Route::delete('domains/{domain}', [\Modules\Tenancy\App\Http\Controllers\TenantController::class, 'destroyDomain'])->name('domains.destroy');
     });
+});
+
+// Rotas de Autenticação de Alunos (dentro do contexto do tenant)
+Route::middleware(['web', 'tenant'])->group(function () {
+    // Rotas públicas de autenticação
+    Route::prefix('student')->name('student.')->group(function () {
+        Route::get('/register', [StudentAuthController::class, 'showRegisterForm'])->name('register');
+        Route::post('/register', [StudentAuthController::class, 'register'])->name('register');
+        Route::get('/login', [StudentAuthController::class, 'showLoginForm'])->name('login');
+        Route::post('/login', [StudentAuthController::class, 'login'])->name('login');
+    });
+
+    // Rotas protegidas para alunos
+    Route::middleware(['auth', 'student.tenant'])->prefix('student')->name('student.')->group(function () {
+        Route::get('/profile', [StudentAuthController::class, 'profile'])->name('profile');
+        Route::put('/profile', [StudentAuthController::class, 'updateProfile'])->name('profile.update');
+        Route::post('/logout', [StudentAuthController::class, 'logout'])->name('logout');
+    });
+
+    // Rota para trilha atual (placeholder)
+    Route::middleware(['auth', 'student.tenant'])->get('/trilha/atual', function () {
+        return view('student.trail.current')->with('message', 'Trilha atual será implementada em breve!');
+    })->name('trail.current');
+});
+
+// Rotas Administrativas (dentro do contexto do tenant)
+Route::middleware(['web', 'tenant', 'auth', 'admin.manage.students'])->prefix('admin')->name('admin.')->group(function () {
+    // Gestão de Usuários
+    Route::resource('users', UserController::class);
+    Route::post('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+    Route::post('users/{user}/reset-progress', [UserController::class, 'resetProgress'])->name('users.reset-progress');
+    Route::get('users/classrooms', [UserController::class, 'getClassrooms'])->name('users.classrooms');
+    Route::post('users/bulk-update', [UserController::class, 'bulkUpdate'])->name('users.bulk-update');
 });

@@ -1,0 +1,11 @@
+{
+    "name": "Identity",
+    "alias": "identity",
+    "description": "Módulo responsável pela gestão de usuários, turmas e autenticação",
+    "keywords": ["users", "classes", "authentication", "identity"],
+    "priority": 1,
+    "providers": [
+        "Modules\\Identity\\App\\Providers\\IdentityServiceProvider"
+    ],
+    "files": []
+}
